@@ -104,17 +104,17 @@ namespace virtual_desktop
                     switch(index)
                     {
                         case 2:
-                 //   Image2 = ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
+                       Image2 = ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
                             break;
                         case 3:
-                 //Image3 = ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
+                        Image3 = ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
                             break;
                         case 4:
-                 // Image4 = ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
+                        Image4 = ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
                             break;
                         default:
                             //default_image.Source = Screenshot.CaptureScreen();
-                  // default_image = ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
+                        Image1= ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
                             break;
                     }
                     
@@ -130,13 +130,13 @@ namespace virtual_desktop
                     {
                         case 2:
                             //Console.WriteLine("!!");
-                     //Image2.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
+                        Image2.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
                             break;
                         case 3:
-                     //Image3.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
+                        Image3.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
                             break;
                         case 4:
-                     //Image4.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
+                        Image4.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
                             break;
                         default:
                             break;
@@ -151,23 +151,19 @@ namespace virtual_desktop
             switch (currentDesktop)
             {
                 case "Default":
-                    Console.WriteLine(currentDesktop);
-            ///default_image.Source = Screenshot.CaptureScreen();
+                    Image1.Source = Screenshot.CaptureScreen();
                     //default_image = ConvertDrawingImageToWPFImage(Screenshot.CaptureScreen());
                     break;
                 case "Desktop2":
-                    Console.WriteLine(currentDesktop);
-            //Image2.Source = Screenshot.CaptureScreen();
+                    Image2.Source = Screenshot.CaptureScreen();
                     //Image2 = ConvertDrawingImageToWPFImage(Screenshot.CaptureScreen());
                     break;
                 case "Desktop3":
-                    Console.WriteLine(currentDesktop);
-             //Image3.Source = Screenshot.CaptureScreen();
+                    Image3.Source = Screenshot.CaptureScreen();
                     //Image3 = ConvertDrawingImageToWPFImage(Screenshot.CaptureScreen());
                     break;
                 case "Desktop4":
-                    Console.WriteLine(currentDesktop);
-              //Image4.Source = Screenshot.CaptureScreen();
+                    Image4.Source = Screenshot.CaptureScreen();
                     //Image4 = ConvertDrawingImageToWPFImage(Screenshot.CaptureScreen());
                     break;
             }// switch
@@ -308,6 +304,23 @@ namespace virtual_desktop
         void window_Deactivated(object sender, EventArgs e)
         {
             this.WindowState = WindowState.Minimized;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if(Desktops.DesktopExists("Desktop2"))
+            {
+                Desktops.DesktopClose("Desktop2");
+            }
+            if (Desktops.DesktopExists("Desktop3"))
+            {
+                Desktops.DesktopClose("Desktop3");
+            }
+            if (Desktops.DesktopExists("Desktop4"))
+            {
+                Desktops.DesktopClose("Desktop4");
+            }
+            this.Close();
         }
 
         void Image1_Click(object sender, EventArgs e)
