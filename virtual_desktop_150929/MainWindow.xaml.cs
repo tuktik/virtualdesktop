@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Forms;
+using winforms = System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -52,7 +52,7 @@ namespace virtual_desktop
         private const int SC_MAXIMIZE = 61488;
        // Private Const SC_MAXIMIZE As Integer = 61488
 
-        private string currentDesktop = "";
+        private string currentDesktop = "Default";
         public static string Start = string.Empty;
 
         public MainWindow()
@@ -90,53 +90,67 @@ namespace virtual_desktop
             //Console.WriteLine("loadScreens");
             for (int index = 1; index < 5; index++)
             {
-                string path = ".\\Desktop" + index.ToString();  // Name of the image
-
+                string path = System.IO.Path.GetDirectoryName(winforms.Application.ExecutablePath) + "\\Desktop" + index.ToString(); // Name of the image
+               
                 if (File.Exists(path))  // If file exists
                 {
-                    // Create memory stream to hold the image for use, otherwise the file will be locked and unusable forther
                     MemoryStream stream = new MemoryStream();
                     System.Drawing.Image image = Bitmap.FromFile(path);
                     image.Save(stream, ImageFormat.Jpeg);  // Load image file to memory stream
                     image.Dispose();     // Dispose and unlock the file
 
+                    stream.Position = 0;
+
+                    BitmapImage bitmapimage = new BitmapImage();
+                    bitmapimage.BeginInit();
+                    bitmapimage.StreamSource = stream;
+                    bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapimage.EndInit();
+                    // Get the PictureBox name and load in it image from memory
+
+                    //Image1.Source = bitmapimage;
+                    //Image1.Stretch = Stretch.Uniform;
                     
-                    switch(index)
+                    switch (index)
                     {
                         case 2:
-                       Image2 = ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
+                            Image2.Source = bitmapimage;
+                            Image2.Stretch = Stretch.Uniform;
+                            //ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
                             break;
                         case 3:
-                        Image3 = ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
+                            Image3.Source = bitmapimage;
+                            Image3.Stretch = Stretch.Uniform;
+                            //= ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
                             break;
                         case 4:
-                        Image4 = ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
+                            Image4.Source = bitmapimage;
+                            Image4.Stretch = Stretch.Uniform;
+                            //= ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
                             break;
                         default:
                             //default_image.Source = Screenshot.CaptureScreen();
-                        Image1= ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
+                            Image1.Source = bitmapimage;
+                             Image1.Stretch = Stretch.Uniform;
+                            
+                            //Image1.imagebrush
+                            //= ConvertDrawingImageToWPFImage(Bitmap.FromStream(stream));
                             break;
                     }
-                    
-                    
-                    // Get the PictureBox name and load in it image from memory
-                    //string pictureBox = "pictureBox" + index.ToString();
-                    //((PictureBox)tableLayoutPanel1.Controls[pictureBox]).Image = Bitmap.FromStream(stream);
-                    
+   
                 }// if
                 else
                 {
                     switch (index)
                     {
                         case 2:
-                            //Console.WriteLine("!!");
-                        Image2.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
+                            Image2.Source = (ImageSource)new BitmapImage((new Uri("black.jpg", UriKind.Relative)));
                             break;
                         case 3:
-                        Image3.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
+                            Image3.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
                             break;
                         case 4:
-                        Image4.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
+                            Image4.Source = (ImageSource)new BitmapImage((new Uri("/black.jpg", UriKind.Relative)));
                             break;
                         default:
                             break;
@@ -147,7 +161,6 @@ namespace virtual_desktop
 
         private void LoadScreenshot()
         {
-            //Console.WriteLine("loadscreen");
             switch (currentDesktop)
             {
                 case "Default":
@@ -325,27 +338,34 @@ namespace virtual_desktop
 
         void Image1_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("image1click");
+                                                         //Console.WriteLine("image1click");
             this.WindowState = WindowState.Minimized;
+
             DesktopInitialize("Default");
         }
 
         void Image2_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("image2click");
+            
+                                                        //Console.WriteLine("image2click");
             this.WindowState = WindowState.Minimized;
+            
             DesktopInitialize("Desktop2");
         }
 
         void Image3_Click(object sender, EventArgs e)
         {
+           // Start = "start";
             this.WindowState = WindowState.Minimized;
+            
             DesktopInitialize("Desktop3");
         }
 
         void Image4_Click(object sender, EventArgs e)
         {
+           // Start = "start";
             this.WindowState = WindowState.Minimized;
+            
             DesktopInitialize("Desktop4");
         }
 

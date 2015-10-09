@@ -16,9 +16,16 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Image x:Name="Image1" Margin="10"/>
-        <Image x:Name="Image2" Margin="10" Grid.Column="1"/>
-        <Image x:Name="Image3" Margin="10" Grid.Row="1"/>
-        <Image x:Name="Image4" Margin="10" Grid.Column="1" Grid.Row="1"/>
+        <!--<Canvas x:Name="Image1" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Width="Auto" Height="Auto" MouseDown="Image1_Click">
+            <Canvas.Background>
+                <ImageBrush ImageSource="black.jpg" Stretch="Fill"/>
+            </Canvas.Background>
+        </Canvas>
+        -->
+        <!---->
+            <Image x:Name="Image1" Margin="10" MouseDown="Image1_Click"/>
+        <Image x:Name="Image2" Margin="10" Grid.Column="1"  MouseDown="Image2_Click"/>
+        <Image x:Name="Image3" Margin="10" Grid.Row="1"  MouseDown="Image3_Click"/>
+        <Image x:Name="Image4" Margin="10" Grid.Column="1" Grid.Row="1"  MouseDown="Image4_Click"/>
     </Grid>
 </Window>

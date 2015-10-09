@@ -81,6 +81,8 @@ namespace virtual_desktop
             var width = Screen.PrimaryScreen.Bounds.Width;
             var height = Screen.PrimaryScreen.Bounds.Height;
 
+            Console.WriteLine("left:" + left + "top:" + top + "width:" + width + "height:" + height);
+
             var right = left + width;
             var bottom = top + height;
 
