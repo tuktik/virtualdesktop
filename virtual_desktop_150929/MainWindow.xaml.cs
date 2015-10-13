@@ -239,6 +239,11 @@ namespace virtual_desktop
                 
 
                 myProcess.Start();
+                foreach (ProcessThread pt in myProcess.Threads)
+                {
+                    Console.WriteLine("WindowLoaded~DesktopName:" + Desktops.GetThreadDesktop(pt.Id));
+                }
+               
                 //Process proc = Process.Start("explorer.exe");
 
                 /*
@@ -321,9 +326,11 @@ namespace virtual_desktop
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            Console.WriteLine("sdlfkjsdsdfsdfsdfsdflfkj");
             if(Desktops.DesktopExists("Desktop2"))
             {
-                Desktops.DesktopClose("Desktop2");
+                var res = Desktops.DesktopClose("Desktop2");
+                Console.WriteLine("desktop closed vlaue is:"+ res);
             }
             if (Desktops.DesktopExists("Desktop3"))
             {
@@ -333,6 +340,7 @@ namespace virtual_desktop
             {
                 Desktops.DesktopClose("Desktop4");
             }
+            Thread.Sleep(1000);
             this.Close();
         }
 

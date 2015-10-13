@@ -12,6 +12,9 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Threading;
 
+using System.Collections;
+using System.IO;
+
 namespace virtual_desktop
 {
     /// <summary>
@@ -39,8 +42,14 @@ namespace virtual_desktop
         public static extern bool CloseDesktop(IntPtr hDesktop);
 
         [DllImport("user32.dll")]
-        private static extern bool GetUserObjectInformation(
+        public static extern IntPtr GetThreadDesktop(int dwThreadId);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetUserObjectInformation(
             IntPtr hObj, int nIndex, IntPtr pvInfo, int nLength, ref int lpnLengthNeeded);
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowThreadProcessId(IntPtr handle, out int processId);
 
         [DllImport("kernel32.dll")]
         public static extern bool CreateProcess(
@@ -180,10 +189,28 @@ namespace virtual_desktop
         /// <returns>True if sucessful, otherwise false.</returns>
         public static bool DesktopClose(string name)
         {
-            IntPtr handle = DesktopOpen(name);
-            if (handle == IntPtr.Zero) { return false; }
-            return CloseDesktop(handle);
+            Console.WriteLine("DesktopClose call!");
+            Process[] processes = Desktops.GetInputProcesses(name);
+            Process thisProc = Process.GetCurrentProcess();
+            foreach (Process p in processes)
+            {
+                if (p.ProcessName != thisProc.ProcessName)
+                {
+                    p.Kill();
+                }
+            }
 
+            IntPtr handle = DesktopOpen(name);
+            
+            Console.WriteLine("closeHandle:"+handle);
+            
+            if (handle == IntPtr.Zero) { return false; }
+            else
+            {
+                Console.WriteLine("call closeDesktop");
+                return CloseDesktop(handle);
+            }
+            
         }//
 
 
@@ -258,6 +285,92 @@ namespace virtual_desktop
                 return false;
             }
         }// 
+
+
+        public static Process[] GetInputProcesses(string currentDesktop)
+        {
+            Console.WriteLine("GetInputProcesses call!");
+            // get all processes.
+            Process[] processes = Process.GetProcesses();
+
+            ArrayList m_procs = new ArrayList();
+
+            // get the current desktop name.
+            // = GetDesktopName(Desktop.Input.DesktopHandle);
+
+            // cycle through the processes.
+            int index = 0;
+
+            TextWriter oldOut = Console.Out;
+            FileStream ostrm;
+            StreamWriter writer;
+
+            try
+            {
+                ostrm = new FileStream("./output.txt", FileMode.OpenOrCreate, FileAccess.Write);
+                writer = new StreamWriter(ostrm);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Cannot open Redirect.txt for writing");
+                Console.WriteLine(e.Message);
+                return null;
+            }
+            Console.SetOut(writer);
+
+            foreach (Process process in processes)
+            {
+                ProcessThreadCollection threadlist = process.Threads;
+                int processID = 0;
+                int threadID = GetWindowThreadProcessId(process.MainWindowHandle, out processID);
+                  
+                Console.WriteLine("DesktopName(GetThreadDesktop(pt.Id))::" + GetThreadDesktop(threadID));
+                /*
+                GetThreadDesktop(threadID)
+                foreach (ProcessThread theThread in threadlist)
+                {
+                    //Console.WriteLine("Thread ID:{0}",theThread.Id);
+                    Console.WriteLine("DesktopName(GetThreadDesktop(pt.Id))::" + GetThreadDesktop(theThread.Id));
+                }
+                 */
+            }
+            
+            
+            /*
+            foreach (Process process in processes)
+            {
+                // check the threads of the process - are they in this one?
+                foreach (ProcessThread pt in process.Threads)
+                {
+                    //Console.WriteLine("process value {0} is" + process, index++);
+                    // check for a desktop name match.
+                   
+                    
+                    Console.WriteLine("DesktopName(GetThreadDesktop(pt.Id))::" + DesktopName(GetThreadDesktop(pt.Id)));
+                    
+                    if (DesktopName(GetThreadDesktop(pt.Id)) == currentDesktop)
+                    {
+                        Console.WriteLine("matched value is" + process);
+                        // found a match, add to list, and bail.
+                        m_procs.Add(process);
+                        break;
+                    }
+                }
+            }
+            */
+            Console.SetOut(oldOut);
+            writer.Close();
+            ostrm.Close();
+
+            // put ArrayList into array.
+            Process[] procs = new Process[m_procs.Count];
+
+            for (int i = 0; i < procs.Length; i++) procs[i] = (Process)m_procs[i];
+
+            return procs;
+        }
+
+
 
     }// class
 
