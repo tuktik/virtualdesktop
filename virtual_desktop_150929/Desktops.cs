@@ -41,7 +41,7 @@ namespace virtual_desktop
         [DllImport("user32.dll")]
         public static extern bool CloseDesktop(IntPtr hDesktop);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetThreadDesktop(int dwThreadId);
 
         [DllImport("user32.dll")]
@@ -196,7 +196,9 @@ namespace virtual_desktop
             {
                 if (p.ProcessName != thisProc.ProcessName)
                 {
+                    Console.WriteLine("process p:" + p + " kill!!");
                     p.Kill();
+
                 }
             }
 
@@ -318,6 +320,7 @@ namespace virtual_desktop
             }
             Console.SetOut(writer);
 
+            /*
             foreach (Process process in processes)
             {
                 ProcessThreadCollection threadlist = process.Threads;
@@ -332,11 +335,11 @@ namespace virtual_desktop
                     //Console.WriteLine("Thread ID:{0}",theThread.Id);
                     Console.WriteLine("DesktopName(GetThreadDesktop(pt.Id))::" + GetThreadDesktop(theThread.Id));
                 }
-                 */
+                 *
             }
+            */
             
-            
-            /*
+            //GetThreadDesktop(threadID)
             foreach (Process process in processes)
             {
                 // check the threads of the process - are they in this one?
@@ -348,7 +351,7 @@ namespace virtual_desktop
                     
                     Console.WriteLine("DesktopName(GetThreadDesktop(pt.Id))::" + DesktopName(GetThreadDesktop(pt.Id)));
                     
-                    if (DesktopName(GetThreadDesktop(pt.Id)) == currentDesktop)
+                    if (DesktopName(GetThreadDesktop(pt.Id)) != "Default")
                     {
                         Console.WriteLine("matched value is" + process);
                         // found a match, add to list, and bail.
@@ -357,7 +360,7 @@ namespace virtual_desktop
                     }
                 }
             }
-            */
+            
             Console.SetOut(oldOut);
             writer.Close();
             ostrm.Close();
